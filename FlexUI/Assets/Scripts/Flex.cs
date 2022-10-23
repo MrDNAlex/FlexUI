@@ -11,6 +11,10 @@ namespace FlexUI
     public class Flex 
     {
 
+
+        //Develop a animation framework that calculates the first and last frames of the animation and then it loops through the animation instead of recalculating UI every frame
+
+
         // Rules
 
         //Flex Polynomial
@@ -19,6 +23,8 @@ namespace FlexUI
         //At Power 1 the value of one single unit of X in pixels will be calculated as the UI is initialized 
 
         //Reference to the RectTransform this Flex will modify
+
+
         RectTransform UI;
 
         //Reference to all the children Flexes 
@@ -26,6 +32,7 @@ namespace FlexUI
 
 
         [Header("Flex")]
+        public string name;
         //Flex value for the parent, (Cannot be turned into a pixel value, will only serve as a flex unit)
         public float flex;
 
@@ -82,30 +89,9 @@ namespace FlexUI
         [Header("Starting Parent Settings")]
         //The size that the flex will start at
         public Vector2 size;
+        [Header("Override Size")]
         //The size that a child flex will take if custom size toggle is on (WIP)
         public Vector2 customSize;
-
-        /*
-        private void Awake()
-        {
-           // Debug.Log("Awake " + gameObject.name);
-           // UI = gameObject.GetComponent<RectTransform>();
-            
-        }
-
-        private void Start()
-        {
-            //Check if the size is set to something
-            if (size.magnitude != 0)
-            {
-                Debug.Log("Setting Size");
-                //Grab all children Flexes
-               // getChildrenFlex();
-                //Set the size of the parent
-                this.setSize(size);
-            }
-        }
-        */
 
         public Flex(RectTransform UIItem, float flex)
         {
@@ -236,6 +222,7 @@ namespace FlexUI
                 //Apply child Multi
                 if (childMultiH != 0)
                 {
+                    Debug.Log("Hello");
                     size = new Vector2(defaultWidthCalc(thisSize.x), children.Count * childMultiH);
                 }
                 if (childMultiW != 0)
@@ -285,24 +272,16 @@ namespace FlexUI
                     else
                         UI.gameObject.GetComponent<VerticalLayoutGroup>().padding.left= (int)(padLeftFlex.coefficient * wVal);
                     //Right
-                    if (padTopFlex.power == 0)
-                        UI.gameObject.GetComponent<VerticalLayoutGroup>().padding.top = (int)(padTopFlex.coefficient);
+                    if (padRightFlex.power == 0)
+                        UI.gameObject.GetComponent<VerticalLayoutGroup>().padding.right = (int)(padRightFlex.coefficient);
                     else
-                        UI.gameObject.GetComponent<VerticalLayoutGroup>().padding.top = (int)(padTopFlex.coefficient * wVal);
+                        UI.gameObject.GetComponent<VerticalLayoutGroup>().padding.right = (int)(padRightFlex.coefficient * wVal);
 
                     //Spacing
                     if (spacingFlex.power == 0)
                         UI.gameObject.GetComponent<VerticalLayoutGroup>().spacing = (int)((spacingFlex.coefficient)); // UI.gameObject.GetComponent<VerticalLayoutGroup>().spacing = (int)((spacingFlex.coefficient) / (children.Count - 1));  add a setting for this
                     else
                         UI.gameObject.GetComponent<VerticalLayoutGroup>().spacing = (int)((spacingFlex.coefficient * hVal) / (children.Count - 1));
-
-                    /*
-                    UI.gameObject.GetComponent<VerticalLayoutGroup>().padding.bottom = (int)(padDownFlex * hVal);
-                    UI.gameObject.GetComponent<VerticalLayoutGroup>().padding.left = (int)(padLeftFlex * wVal);
-                    UI.gameObject.GetComponent<VerticalLayoutGroup>().padding.right = (int)(padRightFlex * wVal);
-
-                    UI.gameObject.GetComponent<VerticalLayoutGroup>().spacing = (int)((spacingFlex * hVal) / (children.Count - 1));
-                    */
 
                 }
                 else
@@ -323,10 +302,10 @@ namespace FlexUI
                     else
                         UI.gameObject.GetComponent<HorizontalLayoutGroup>().padding.left = (int)(padLeftFlex.coefficient * wVal);
                     //Right
-                    if (padTopFlex.power == 0)
-                        UI.gameObject.GetComponent<HorizontalLayoutGroup>().padding.top = (int)(padTopFlex.coefficient);
+                    if (padRightFlex.power == 0)
+                        UI.gameObject.GetComponent<HorizontalLayoutGroup>().padding.right = (int)(padRightFlex.coefficient);
                     else
-                        UI.gameObject.GetComponent<HorizontalLayoutGroup>().padding.top = (int)(padTopFlex.coefficient * wVal);
+                        UI.gameObject.GetComponent<HorizontalLayoutGroup>().padding.right = (int)(padRightFlex.coefficient * wVal);
 
                     //Spacing
                     if (spacingFlex.power == 0)
@@ -334,15 +313,6 @@ namespace FlexUI
                     else
                         UI.gameObject.GetComponent<HorizontalLayoutGroup>().spacing = (int)((spacingFlex.coefficient * wVal) / (children.Count - 1));
 
-
-                    /*
-                    UI.gameObject.GetComponent<HorizontalLayoutGroup>().padding.top = (int)(padUpFlex * hVal);
-                    UI.gameObject.GetComponent<HorizontalLayoutGroup>().padding.bottom = (int)(padDownFlex * hVal);
-                    UI.gameObject.GetComponent<HorizontalLayoutGroup>().padding.left = (int)(padLeftFlex * wVal);
-                    UI.gameObject.GetComponent<HorizontalLayoutGroup>().padding.right = (int)(padRightFlex * wVal);
-
-                    UI.gameObject.GetComponent<HorizontalLayoutGroup>().spacing = (int)((spacingFlex * wVal) / (children.Count - 1));
-                    */
                 }
             }
 
@@ -415,7 +385,7 @@ namespace FlexUI
             //Add spacing Flexes
             if (layoutGroupVert && layoutGroup)
             {
-                eqY.addPolynomial(spacingFlex);
+                eqY.addPolynomial(spacingFlex.coefficient, spacingFlex.power);
             }
 
             //Add children flexes
@@ -471,7 +441,7 @@ namespace FlexUI
                     spacingFlex.setVariable("x");
                 }
 
-                eqX.addPolynomial(spacingFlex);
+                eqX.addPolynomial(spacingFlex.coefficient, spacingFlex.power);
             }
             //Add children
             if (!layoutGroupVert)
@@ -500,10 +470,8 @@ namespace FlexUI
                 eqX.addPolynomial(1, 1);
             }
 
-           // Debug.Log("Display");
-           // eqX.displayAllPoly();
-
-            return eqX.solveSingleEQ(size.x);
+            Debug.Log("Width");
+            return eqX.solveSingleEQ(size.x, name);
         }
 
         //Next week or if we get to use this create a system that allows you to make a blueprint or prefab type thing and then you can input a list of rectTransforms to instance which things will be affected

@@ -101,7 +101,7 @@ namespace FlexUI
         //Add extra variables such as initial guess and stuff
         //Switch this to list of floats and also list of equations
 
-        public float solveSingleEQ(float ans)
+        public float solveSingleEQ(float ans, string debugname = "")
         {
             polyClean();
 
@@ -134,7 +134,7 @@ namespace FlexUI
                     break;
                 case 1:
 
-
+                    Debug.Log("Case 1");
 
 
                     //Ok gotta add the answer to the equation too as a negative aswell
@@ -156,6 +156,7 @@ namespace FlexUI
 
                     derivative.setEquation(cleanPoly);
                     derivative.derive();
+                    derivative.polyClean();
 
                     // Debug.Log("Derivative");
                     // derivative.displayCleanPoly();
@@ -182,20 +183,20 @@ namespace FlexUI
 
                         // Debug.Log(diffPer);
 
-                        if (diffPer < 0.001f && i > 5)
+                        if (diffPer < 0.001f)
                         {
                             i = 100;
                         }
                     }
 
-                   
+                    Debug.Log("X " + x);
                     value = x;
 
                     break;
 
                 case 2:
 
-
+                    Debug.Log("Case 2");
 
                     //Ok gotta add the answer to the equation too as a negative aswell
 
@@ -210,6 +211,9 @@ namespace FlexUI
                     newEQ.addPolynomial(new FlexPolynomial(-ans, 0, var));
                     newEQ.polyClean();
 
+                    Debug.Log(debugname);
+                    newEQ.displayCleanPoly();
+                    newEQ.displayAllPoly();
                     // Debug.Log("New Equation");
                     //newEQ.displayCleanPoly();
 

@@ -7,6 +7,8 @@ using UnityEngine.UI;
 namespace FlexUI
 {
 
+    //May have to rewrite the entire system again another time
+
 
     public class FlexInfo : MonoBehaviour
     {
